@@ -65,10 +65,18 @@ task("changeRewardTokens", "Sets new percent of reward for staking")
         console.log("New percent of reward is:", taskArgs.percent)
     })
 
-task("giveAdminRights", "Adds new account as a CHANGER")
+task("giveChangerRights", "Adds new account as a CHANGER")
     .addParam("address", "Address to make a CHANGER")
     .setAction(async (taskArgs, hre) => {
         const StakingInterface = await hre.ethers.getContractAt("Staking", ContractAddress)
-        await StakingInterface.giveAdminRights(taskArgs.address)
+        await StakingInterface.giveChangerRights(taskArgs.address)
         console.log("New CHANGER is:", taskArgs.address)
+    })
+
+task("revokeChangerRights", "Revoke account as a CHANGER")
+    .addParam("address", "Address to revoke as CHANGER")
+    .setAction(async (taskArgs, hre) => {
+        const StakingInterface = await hre.ethers.getContractAt("Staking", ContractAddress)
+        await StakingInterface.revokeChangerRights(taskArgs.address)
+        console.log(taskArgs.address,"Now is not a CHANGER")
     })
