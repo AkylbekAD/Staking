@@ -1,6 +1,7 @@
 import { task } from "hardhat/config";
 
 const ContractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3" // for localhost network:
+const UniswapV2Address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D" // for getting LP tokens
 
 task("rewardPercent", "Prints reward percent of staking")
     .setAction(async (taskArgs, hre) => {
@@ -79,4 +80,24 @@ task("revokeChangerRights", "Revoke account as a CHANGER")
         const StakingInterface = await hre.ethers.getContractAt("Staking", ContractAddress)
         await StakingInterface.revokeChangerRights(taskArgs.address)
         console.log(taskArgs.address,"Now is not a CHANGER")
+    })
+
+task("addLiquidityETH", "Adds liquidity pool UNI-V2/QTN to uniswap")
+    .addParam("token", "Token address")
+    .addParam("tokenDesired", "Amount of token to add as liquidity")
+    .addParam("tokenMin", "WETH/token price can go up")
+    .addParam("ether", "The extent to which the token/WETH price can go up")
+    .addParam("to", "Recipient address of the liquidity tokens")
+    .addParam("deadline", "Unix timestamp after which the transaction will revert")
+    .setAction(async (taskArgs, hre) => {
+        const UniswapV2Interface = await hre.ethers.getContractAt("UniswapV2Router02", UniswapV2Address)
+        await UniswapV2Interface.addLiquidityETH(
+            taskArgs.token, 
+            taskArgs.tokenDesired, 
+            taskArgs.tokenMin, 
+            taskArgs.ether,
+            taskArgs.to,
+            taskArgs.deadline
+            )
+        console.log(`V2 Liquidity pool added, ${taskArgs.ether} ETH has been paid`)
     })

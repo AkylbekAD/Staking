@@ -4,7 +4,10 @@ import { HardhatUserConfig } from "hardhat/config";
 import '@nomiclabs/hardhat-ethers';
 import "@nomiclabs/hardhat-etherscan";
 import "@typechain/hardhat";
+
 import "solidity-coverage";
+import "hardhat-gas-reporter"
+import "hardhat-contract-sizer"
 
 dotenv.config();
 
@@ -28,7 +31,20 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_KEY,
-    }
+  },
+  gasReporter: {
+    coinmarketcap: process.env.COINMARKET_KEY,
+    currency: 'USD',
+    gasPriceApi: "etherscan",
+    excludeContracts: ['TestLPToken.sol', 'TestRewardToken.sol']
+  },
+  contractSizer: {
+    alphaSort: true,
+    disambiguatePaths: false,
+    runOnCompile: true,
+    strict: true,
+    only: ['Staking'],
+  }
 };
 
 export default config;

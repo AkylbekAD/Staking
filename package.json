@@ -1,6 +1,8 @@
 {
   "name": "hardhat-project",
-  "dependencies": {},
+  "dependencies": {
+    "hardhat-contract-sizer": "^2.5.1"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
@@ -14,6 +16,7 @@
     "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.4.4",
     "hardhat": "^2.9.1",
+    "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.7.20",
     "ts-node": "^10.7.0",
     "typechain": "^8.0.0",
