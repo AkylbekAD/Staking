@@ -1,6 +1,7 @@
 import { task } from "hardhat/config";
 
-const ContractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3" // for localhost network:
+// const ContractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3" // for localhost network:
+const ContractAddress = "0x879a56D917aaaD654e3372E3f9761509D7168967" // for Rinkeby network;
 const UniswapV2Address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D" // for getting LP tokens
 
 task("rewardPercent", "Prints reward percent of staking")
@@ -9,6 +10,14 @@ task("rewardPercent", "Prints reward percent of staking")
         let rewardPercent = await StakingInterface.rewardPercent()
         rewardPercent = rewardPercent.toString()
         console.log("Reward percent of staking is:",rewardPercent)
+    })
+
+task("percentDecimals", "Prints decimals of reward percent")
+    .setAction(async (taskArgs, hre) => {
+        const StakingInterface = await hre.ethers.getContractAt("Staking", ContractAddress)
+        let percentDecimals = await StakingInterface.percentDecimals()
+        percentDecimals = percentDecimals.toString()
+        console.log("Decimals of reward percent is:",percentDecimals)
     })
 
 task("stakeTime", "Prints stake time of staking")

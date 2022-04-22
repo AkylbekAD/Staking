@@ -6,7 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract Staking is Ownable, AccessControl {
-    uint public rewardPercent = 20;
+    uint public percentDecimals = 3;
+    uint public rewardPercent = 20000;
     uint public stakeTime = 20 minutes;
     address public QuokkaTokenAddress;
     address public UNIV2Address; 
@@ -28,10 +29,11 @@ contract Staking is Ownable, AccessControl {
     }
     
     function stake(uint256 amount) external {
+        require(amount >= 100**percentDecimals, "You have to stake atleast 0.00001 of UNI-V2");
         IERC20(UNIV2Address).transferFrom(msg.sender, address(this), amount);
         stakingProviders[msg.sender].stakedTokens = amount;
         stakingProviders[msg.sender].freezeTime = block.timestamp + stakeTime;
-        stakingProviders[msg.sender].rewardTokens = amount * rewardPercent / 100;
+        stakingProviders[msg.sender].rewardTokens = (amount * rewardPercent) / (100 * 10 ** percentDecimals);
     }
 
     function claim() external isTimePassed {

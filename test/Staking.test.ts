@@ -42,7 +42,7 @@ describe("Staking contract", function () {
 
   describe("Getter public functions", function() {
     it("Should return reward percent from 'rewardPercent' getter function", async function() {
-      expect(await StakingInterface.rewardPercent()).to.equal("20")
+      expect(await StakingInterface.rewardPercent()).to.equal("20000")
     })
 
     it("Should return stake time from 'stakeTime' getter function", async function() {
@@ -66,6 +66,10 @@ describe("Staking contract", function () {
         await stakeLPtokens(acc1,1000000000000)
         const stakedTokens = await StakingInterface.stakingProviders(acc1.address)
         expect(ethers.utils.formatUnits(stakedTokens[0], 0)).to.equal("1000000000000")
+      })
+
+      it("User have to stake atleast 0.00001 of UNI-V2 token", async function () {
+        expect(stakeLPtokens(acc1,99999)).to.be.revertedWith("You have to stake atleast 0.00001 of UNI-V2") // have to stake atleast 100000 LP tokens
       })
     })
 
