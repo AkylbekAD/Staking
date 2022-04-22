@@ -3,6 +3,8 @@ Smart-contract on solidity for staking UNI-V2 (LP) tokens, as a reward for staki
 
 Alchemy - https://dashboard.alchemyapi.io/apps/wnx2r7ghi3cvrq4k
 
+Etherscan - https://rinkeby.etherscan.io/address/0x879a56D917aaaD654e3372E3f9761509D7168967#code
+
 ## Main contract of the project is at ```Staking.sol```
 
 ## To test there are 2 additional contracts:
