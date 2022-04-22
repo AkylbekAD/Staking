@@ -96,22 +96,24 @@ task("addLiquidityETH", "Adds liquidity pool UNI-V2/QTN to uniswap")
     .addParam("amounttokendesired", "Amount of token to add as liquidity")
     .addParam("amounttokenmin", "WETH/token price can go up")
     .addParam("amountethmin", "The extent to which the token/WETH price can go up")
-    .addParam("to", "Recipient address of the liquidity tokens")
-    .addParam("deadline", "Unix timestamp after which the transaction will revert")
     .setAction(async (taskArgs, hre) => {
-        const RewardQTNaddress = "0x04d9dfeA1b3815B62B7E105AF570A742a2Ba6334" // reward QuokkaToken token address;
+        const RewardQTNaddress = "0x04d9dfeA1b3815B62B7E105AF570A742a2Ba6334" // reward QuokkaToken token address
+        const myAccount = "0xa162B39F86A7341948A2E0A8DaC3f0DFf071D509"
+        const deadline = +new Date() + 100
+        console.log(hre.ethers.Signer.isSigner(myAccount))
         const UniswapV2Interface = await hre.ethers.getContractAt("IUniswapV2Router02", UniswapV2Address)
-        await UniswapV2Interface.addLiquidityETH(
+        const tx = await UniswapV2Interface.addLiquidityETH(
             RewardQTNaddress, 
             taskArgs.amounttokendesired, 
             taskArgs.amounttokenmin, 
             taskArgs.amountethmin,
-            taskArgs.to,
-            taskArgs.deadline,
+            myAccount,
+            deadline,
             {value: 1000000000000000}
             )
-        console.log(`V2 Liquidity pool added ETH has been paid`)
+        await tx.wait()
+        console.log(tx)
     })
 
     // command below I use to addLiquidityETH
-    // npx hardhat addLiquidityETH --amounttokendesired 10000000000000000 --amounttokenmin 0 --amountethmin 1000000000000000000 --to 0xa162B39F86A7341948A2E0A8DaC3f0DFf071D509 --deadline 1650624800
+    // npx hardhat addLiquidityETH --amounttokendesired 1000000000000000 --amounttokenmin 1 --amountethmin 100000000000000000 --network rinkeby
