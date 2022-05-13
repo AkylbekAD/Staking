@@ -45,8 +45,8 @@ describe("Staking contract", function () {
       expect(await StakingInterface.rewardPercent()).to.equal("20000")
     })
 
-    it("Should return stake time from 'stakeTime' getter function", async function() {
-        expect(await StakingInterface.stakeTime()).to.equal("1200")
+    it("Should return stake time from 'claimTime' getter function", async function() {
+        expect(await StakingInterface.claimTime()).to.equal("1200")
       })
   })
 
@@ -77,7 +77,7 @@ describe("Staking contract", function () {
       it("Claim function avaliable when staking time passed and transfers reward tokens to provider", async function () {
         await stakeLPtokens(acc1,1000000000000)
 
-        await ethers.provider.send("evm_increaseTime", [1200]) // pass freeze time
+        await ethers.provider.send("evm_increaseTime", [5000]) // pass freeze time
         await ethers.provider.send("evm_mine", [])
 
         await StakingInterface.connect(acc1).claim() // gets reward tokens
@@ -87,7 +87,7 @@ describe("Staking contract", function () {
 
       it("Claim function is not avaliable if staking time didnt pass", async function () {
         await stakeLPtokens(acc1,1000000000000)
-        expect(StakingInterface.connect(acc1).claim()).to.be.revertedWith("Stake time have not pass yet")
+        expect(StakingInterface.connect(acc1).claim()).to.be.revertedWith("Claim time have not pass yet")
       })
     })
 
@@ -95,7 +95,7 @@ describe("Staking contract", function () {
       it("Unstake function avaliable when staking time passed and transfers LP tokens to provider", async function () {
         await stakeLPtokens(acc1,100000000000)
 
-        await ethers.provider.send("evm_increaseTime", [1200]) // pass freeze time
+        await ethers.provider.send("evm_increaseTime", [5000]) // pass freeze time
         await ethers.provider.send("evm_mine", [])
 
         await StakingInterface.connect(acc1).unstake() // gets reward tokens
@@ -105,20 +105,31 @@ describe("Staking contract", function () {
 
       it("Unstake function is not avaliable if staking time didnt pass", async function () {
         await stakeLPtokens(acc1,1000000000000)
-        expect(StakingInterface.connect(acc1).unstake()).to.be.revertedWith("Stake time have not pass yet")
+        expect(StakingInterface.connect(acc1).unstake()).to.be.revertedWith("Unstake time have not pass yet")
       })
     })
   }) 
 
   describe("ADMIN and CHANGER only functions", function() {
-    describe("changeStakeTime function", function() {
-      it("changeStakeTime function avaliable to ADMIN and sets new stake time", async function () {
-        await StakingInterface.connect(owner).changeStakeTime(600) // setting new 10 min time 
-        expect(await StakingInterface.stakeTime()).to.equal("600")
+    describe("changeClaimTime function", function() {
+      it("changeClaimTime function avaliable to ADMIN and sets new stake time", async function () {
+        await StakingInterface.connect(owner).changeClaimTime(600) // setting new 10 min time 
+        expect(await StakingInterface.claimTime()).to.equal("600")
       })
 
-      it("changeStakeTime function is not avaliable to users without CHANGER access", async function () {
-        expect(StakingInterface.connect(acc2).changeStakeTime(600)).to.be.revertedWith("You dont have rights to change it")
+      it("changeClaimTime function is not avaliable to users without CHANGER access", async function () {
+        expect(StakingInterface.connect(acc2).changeClaimTime(600)).to.be.revertedWith("You dont have rights to change it")
+      })
+    })
+
+    describe("changeUnstakeTime function", function() {
+      it("changeunstakeTime function avaliable to ADMIN and sets new stake time", async function () {
+        await StakingInterface.connect(owner).changeUnstakeTime(600) // setting new 10 min time 
+        expect(await StakingInterface.unstakeTime()).to.equal("600")
+      })
+
+      it("changeunstakeTime function is not avaliable to users without CHANGER access", async function () {
+        expect(StakingInterface.connect(acc2).changeUnstakeTime(600)).to.be.revertedWith("You dont have rights to change it")
       })
     })
 
@@ -139,12 +150,12 @@ describe("Staking contract", function () {
         await StakingInterface.connect(acc1).changeRewardPercent(10) // setting new 10 percent reward by acc1
         expect(await StakingInterface.rewardPercent()).to.equal("10")
 
-        await StakingInterface.connect(acc1).changeStakeTime(600) // setting new 10 min time by acc1
-        expect(await StakingInterface.stakeTime()).to.equal("600")
+        await StakingInterface.connect(acc1).changeClaimTime(600) // setting new 10 min time by acc1
+        expect(await StakingInterface.claimTime()).to.equal("600")
       })
 
       it("changeRewardPercent function is only avaliable to ADMIN", async function () {
-        expect(StakingInterface.connect(acc2).giveChangerRights(acc2.address)).to.be.revertedWith("Ownable: caller is not the owner")
+        expect(StakingInterface.connect(acc2).giveChangerRights(acc2.address)).to.be.revertedWith("You dont have rights to change it")
       })
     })
 
@@ -160,7 +171,7 @@ describe("Staking contract", function () {
       })
 
       it("revokeChangerRights function is only avaliable to ADMIN", async function () {
-        expect(StakingInterface.connect(acc2).revokeChangerRights(acc2.address)).to.be.revertedWith("Ownable: caller is not the owner")
+        expect(StakingInterface.connect(acc2).revokeChangerRights(acc2.address)).to.be.revertedWith("You dont have rights to change it")
       })
     })
   })
